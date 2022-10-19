@@ -9,7 +9,7 @@ insert(){
     sqlite3 $SCRIPT_DIR/test.db "INSERT INTO TEST_TABLE (ID, NAME, CODE) VALUES ($1, 'NAME$1', $1);"
 }
 
-for ROW in {1..100}
+for ROW in {1..60000}
 do
     insert "$ROW"
 done

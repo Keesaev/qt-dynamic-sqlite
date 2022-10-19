@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "dynamic_sqlite_model.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -17,5 +19,6 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    DynamicSQLiteModel _model;
 };
 #endif // MAINWINDOW_H

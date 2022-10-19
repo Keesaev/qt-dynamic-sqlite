@@ -11,8 +11,11 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(SQLite3)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql)
+
+include_directories(${SQLite3_INCLUDE_DIRS})
 
 file(GLOB SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
@@ -29,5 +32,6 @@ add_executable(${CMAKE_PROJECT_NAME}
 target_link_libraries(qt-dynamic-sqlite PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Sql
+    SQLite::SQLite3
 )
 
