@@ -35,7 +35,7 @@ std::vector<db_row> db_wrapper::select(int size, int offset) const {
     if (ret != SQLITE_OK)
     {
         std::cerr << "sqlite3_prepare_v2 " << ret << std::endl;
-        // finalize
+        sqlite3_finalize(statement);
         return out;
     }
 
@@ -54,6 +54,7 @@ std::vector<db_row> db_wrapper::select(int size, int offset) const {
         ret = sqlite3_step(statement);
     }
     out.shrink_to_fit();
+    sqlite3_finalize(statement);
 
     return out; // TODO
 }
