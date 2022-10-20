@@ -8,25 +8,25 @@
 
 using TableRow = std::vector<QVariant>;
 
-class db_base_table {
+class DbBaseTable {
 protected:
-    db_instance const& _instance;
-    const std::string _table_name;
+    DbInstance const& _instance;
+    const std::string _tableName;
 
 public:
-    db_base_table(db_instance const& instance, std::string table_name)
+    DbBaseTable(DbInstance const& instance, std::string tableName)
         : _instance(instance)
-        , _table_name(table_name)
+        , _tableName(tableName)
     {
     }
-    virtual ~db_base_table()
+    virtual ~DbBaseTable()
     {
     }
 
-    std::string table_name() const { return _table_name; }
+    std::string tableName() const { return _tableName; }
 
-    virtual int row_count() const = 0;
-    virtual int column_count() const = 0;
-    virtual std::vector<TableRow> select(select_query query) const = 0;
+    virtual int rowCount() const = 0;
+    virtual int columnCount() const = 0;
+    virtual std::vector<TableRow> select(SelectQuery query) const = 0;
     virtual void insert(std::vector<TableRow> rows) = 0;
 };

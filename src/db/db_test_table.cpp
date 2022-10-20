@@ -3,14 +3,14 @@
 #include <iostream>
 #include <memory>
 
-db_test_table::db_test_table(db_instance const& instance, std::string table_name)
-    : db_base_table(instance, table_name)
+DbTestTable::DbTestTable(DbInstance const& instance, std::string tableName)
+    : DbBaseTable(instance, tableName)
 {
 }
 
-db_test_table::~db_test_table() { }
+DbTestTable::~DbTestTable() { }
 
-int db_test_table::row_count() const
+int DbTestTable::rowCount() const
 {
     // TODO RAII sqlite3_stm
     const static std::string sql = "SELECT COUNT(*) FROM TEST_TABLE;";
@@ -34,12 +34,12 @@ int db_test_table::row_count() const
     return count;
 }
 
-int db_test_table::column_count() const
+int DbTestTable::columnCount() const
 {
-    return _column_count;
+    return _columnCount;
 }
 
-std::vector<TableRow> db_test_table::select(select_query query) const
+std::vector<TableRow> DbTestTable::select(SelectQuery query) const
 {
     std::vector<TableRow> out;
 
@@ -51,7 +51,7 @@ std::vector<TableRow> db_test_table::select(select_query query) const
 
     using scoped_statement = std::unique_ptr<sqlite3_stmt, decltype(statement_deleter)>;
 
-    auto make_statement = [&statement_deleter](db_instance const& instance, select_query const& query) -> scoped_statement {
+    auto make_statement = [&statement_deleter](DbInstance const& instance, SelectQuery const& query) -> scoped_statement {
         sqlite3_stmt* raw_statement;
         int ret = sqlite3_prepare_v2(instance.connection(), std::string(query).c_str(), -1, &raw_statement, nullptr);
 
@@ -87,6 +87,6 @@ std::vector<TableRow> db_test_table::select(select_query query) const
     return out;
 }
 
-void db_test_table::insert(std::vector<TableRow> rows)
+void DbTestTable::insert(std::vector<TableRow> rows)
 {
 }

@@ -2,15 +2,15 @@
 
 #include "db_base_table.hpp"
 
-class db_test_table final : public db_base_table {
-    static constexpr int _column_count { 3 };
+class DbTestTable final : public DbBaseTable {
+    static constexpr int _columnCount { 3 };
 
 public:
-    db_test_table(db_instance const& instance, std::string table_name);
-    virtual ~db_test_table();
+    DbTestTable(DbInstance const& instance, std::string tableName);
+    virtual ~DbTestTable();
 
-    virtual int row_count() const final;
-    virtual int column_count() const final;
-    virtual std::vector<TableRow> select(select_query query) const final;
+    virtual int rowCount() const final;
+    virtual int columnCount() const final;
+    virtual std::vector<TableRow> select(SelectQuery query) const final;
     virtual void insert(std::vector<TableRow> rows) final;
 };

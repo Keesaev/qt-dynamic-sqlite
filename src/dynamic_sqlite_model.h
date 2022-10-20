@@ -9,8 +9,8 @@ class DynamicSQLiteModel final : public QAbstractTableModel {
 
     const QString _tableName;
 
-    db_instance _db_instance;
-    db_test_table _db_table;
+    DbInstance _db_instance;
+    DbTestTable _db_table;
 
 public:
     explicit DynamicSQLiteModel(QString tableName, QObject* parent = nullptr);

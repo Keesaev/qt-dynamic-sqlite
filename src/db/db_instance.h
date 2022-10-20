@@ -3,14 +3,14 @@
 #include <sqlite3.h>
 #include <string>
 
-class db_instance {
+class DbInstance {
     const std::string _path;
     sqlite3* _connection;
 
 public:
-    db_instance(std::string db_path);
+    DbInstance(std::string db_path);
 
     bool connect();
     sqlite3* connection() const;
-    ~db_instance();
+    ~DbInstance();
 };

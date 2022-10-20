@@ -13,18 +13,18 @@ DynamicSQLiteModel::DynamicSQLiteModel(QString tableName, QObject* parent)
 
 int DynamicSQLiteModel::columnCount(const QModelIndex& parent) const
 {
-    return _db_table.column_count();
+    return _db_table.columnCount();
 }
 
 int DynamicSQLiteModel::rowCount(const QModelIndex& parent) const
 {
-    return _db_table.row_count();
+    return _db_table.rowCount();
 }
 
 QVariant DynamicSQLiteModel::data(const QModelIndex& index, int role) const
 {
     if (role == Qt::DisplayRole) {
-        auto row = _db_table.select(select_query(_db_table.table_name(), 1, index.row()));
+        auto row = _db_table.select(SelectQuery(_db_table.tableName(), 1, index.row()));
         return row[0][index.column()];
     } else {
         return QVariant();

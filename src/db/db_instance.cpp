@@ -1,23 +1,23 @@
 #include "db_instance.h"
 
-db_instance::db_instance(std::string db_path)
+DbInstance::DbInstance(std::string db_path)
     : _path(db_path)
 {
 }
 
-db_instance::~db_instance()
+DbInstance::~DbInstance()
 {
     if (_connection) {
         sqlite3_close(_connection);
     }
 }
 
-sqlite3* db_instance::connection() const
+sqlite3* DbInstance::connection() const
 {
     return _connection;
 }
 
-bool db_instance::connect()
+bool DbInstance::connect()
 {
     int res = sqlite3_open_v2(_path.c_str(), &_connection,
         SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_NOMUTEX,
