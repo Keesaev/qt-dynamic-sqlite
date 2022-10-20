@@ -2,7 +2,7 @@
 
 SCRIPT_DIR=$( dirname -- "$0"; )
 
-rm $SCRIPT_DIR/test.db
+#rm $SCRIPT_DIR/test.db
 sqlite3 $SCRIPT_DIR/test.db "CREATE TABLE TEST_TABLE (ID INT NOT NULL, NAME TEXT NOT NULL, CODE INT NOT NULL);"
 
 insert(){

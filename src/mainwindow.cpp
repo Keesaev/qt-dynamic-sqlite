@@ -3,7 +3,6 @@
 
 #include <iostream>
 
-#include "db/db_test_table.h"
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -12,11 +11,6 @@ MainWindow::MainWindow(QWidget* parent)
     ui->setupUi(this);
 
     ui->tableView->setModel(&_model);
-
-    db_instance inst("./../test/test.db");
-    db_test_table test(inst, "TEST_TABLE");
-
-    auto select = test.select(select_query(test.table_name(), test.row_count()));
 }
 
 MainWindow::~MainWindow()

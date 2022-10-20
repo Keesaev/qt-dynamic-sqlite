@@ -12,7 +12,26 @@ db_test_table::~db_test_table() { }
 
 int db_test_table::row_count() const
 {
-    return 0; // <SQLITE COUNT
+    // TODO RAII sqlite3_stm
+    const static std::string sql = "SELECT COUNT(*) FROM TEST_TABLE;";
+    sqlite3_stmt* statement;
+    int ret = sqlite3_prepare_v2(_instance.connection(), sql.c_str(), -1, &statement, nullptr);
+
+    if (ret != SQLITE_OK) {
+        std::cerr << __FUNCTION__ << ": " << __LINE__ << " - "
+                  << "sqlite3_prepare_v2 " << ret << std::endl;
+        sqlite3_finalize(statement);
+        return 0;
+    }
+
+    ret = sqlite3_step(statement);
+    int count { 0 };
+    if (ret == SQLITE_ROW) {
+        count = sqlite3_column_int(statement, 0);
+    }
+    sqlite3_finalize(statement);
+
+    return count;
 }
 
 int db_test_table::column_count() const
@@ -37,7 +56,8 @@ std::vector<table_row> db_test_table::select(select_query query) const
         int ret = sqlite3_prepare_v2(instance.connection(), std::string(query).c_str(), -1, &raw_statement, nullptr);
 
         if (ret != SQLITE_OK) {
-            std::cerr << "sqlite3_prepare_v2 " << ret << std::endl;
+            std::cerr << __FUNCTION__ << ": " << __LINE__ << " - "
+                      << "sqlite3_prepare_v2 " << ret << std::endl;
             sqlite3_finalize(raw_statement);
             return scoped_statement(nullptr, statement_deleter);
         } else {
