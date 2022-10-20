@@ -1,11 +1,19 @@
 #include "db_wrapper.h"
 
+#include <iostream> // TODO rm
+
 db_wrapper::db_wrapper(std::string path_to_db)
     : _path(path_to_db)
 {
 }
 
-bool db_wrapper::init(){
+db_wrapper::~db_wrapper()
+{
+    sqlite3_close(_db);
+}
+
+bool db_wrapper::init()
+{
     int res = sqlite3_open_v2(_path.c_str(), &_db,
         SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_NOMUTEX,
         NULL);
@@ -16,24 +24,39 @@ bool db_wrapper::init(){
     }
 }
 
-static int select_callback(void *count, int argc, char **argv, char **azColName) {
-    *((int*)(count)) = ::atoi(argv[0]);
-    return 0;
+int db_wrapper::count() const
+{
+    const static std::string sql = "SELECT COUNT(*) FROM TEST_TABLE;";
+    sqlite3_stmt* statement;
+    int ret = sqlite3_prepare_v2(_db, sql.c_str(), -1, &statement, nullptr);
+
+    if (ret != SQLITE_OK) {
+        std::cerr << "sqlite3_prepare_v2 " << ret << std::endl;
+        sqlite3_finalize(statement);
+        return 0;
+    }
+
+    ret = sqlite3_step(statement);
+    int count { 0 };
+    if (ret == SQLITE_ROW) {
+        count = sqlite3_column_int(statement, 0);
+    }
+    sqlite3_finalize(statement);
+
+    return count;
 }
-#include <iostream> // TODO rm
-std::vector<db_row> db_wrapper::select(int size, int offset) const {
+
+std::vector<db_row> db_wrapper::select(int size, int offset) const
+{
     std::string sql = "SELECT * FROM TEST_TABLE ORDER BY ROWID DESC LIMIT "
         + std::to_string(offset) + ',' + std::to_string(size) + ';';
-
-    std::cout << sql << std::endl;
 
     std::vector<db_row> out;
 
     sqlite3_stmt* statement;
     int ret = sqlite3_prepare_v2(_db, sql.c_str(), -1, &statement, nullptr);
 
-    if (ret != SQLITE_OK)
-    {
+    if (ret != SQLITE_OK) {
         std::cerr << "sqlite3_prepare_v2 " << ret << std::endl;
         sqlite3_finalize(statement);
         return out;
@@ -42,8 +65,7 @@ std::vector<db_row> db_wrapper::select(int size, int offset) const {
     out.reserve(size);
 
     ret = sqlite3_step(statement);
-    while (ret == SQLITE_ROW)
-    {
+    while (ret == SQLITE_ROW) {
         db_row row;
 
         row.id = sqlite3_column_int(statement, 0);
@@ -56,7 +78,7 @@ std::vector<db_row> db_wrapper::select(int size, int offset) const {
     out.shrink_to_fit();
     sqlite3_finalize(statement);
 
-    return out; // TODO
+    return out;
 }
 
-void db_wrapper::insert(std::vector<db_row> rows){}
+void db_wrapper::insert(std::vector<db_row> rows) { }

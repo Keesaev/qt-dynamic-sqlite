@@ -3,9 +3,9 @@
 
 #include <iostream>
 
-#include "db_wrapper.h" // TODO rm
+#include "db/db_test_table.h"
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
@@ -13,17 +13,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->tableView->setModel(&_model);
 
-    db_wrapper wr("/home/keesaev/dev/qt-dynamic-sqlite/test/test.db");
-    wr.init();
-    auto out = wr.select(999999);
+    db_instance inst("./../test/test.db");
+    db_test_table test(inst, "TEST_TABLE");
 
-    for(const auto& i : out){
-        std::cout << i.id << " " << i.name << " " << i.code << std::endl;
-    }
+    auto select = test.select(select_query(test.table_name(), test.row_count()));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-
