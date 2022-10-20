@@ -6,7 +6,7 @@
 #include <QVariant>
 #include <vector>
 
-using table_row = std::vector<QVariant>;
+using TableRow = std::vector<QVariant>;
 
 class db_base_table {
 protected:
@@ -27,6 +27,6 @@ public:
 
     virtual int row_count() const = 0;
     virtual int column_count() const = 0;
-    virtual std::vector<table_row> select(select_query query) const = 0;
-    virtual void insert(std::vector<table_row> rows) = 0;
+    virtual std::vector<TableRow> select(select_query query) const = 0;
+    virtual void insert(std::vector<TableRow> rows) = 0;
 };

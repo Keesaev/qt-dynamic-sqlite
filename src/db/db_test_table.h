@@ -11,6 +11,6 @@ public:
 
     virtual int row_count() const final;
     virtual int column_count() const final;
-    virtual std::vector<table_row> select(select_query query) const final;
-    virtual void insert(std::vector<table_row> rows) final;
+    virtual std::vector<TableRow> select(select_query query) const final;
+    virtual void insert(std::vector<TableRow> rows) final;
 };

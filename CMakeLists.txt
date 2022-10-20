@@ -18,17 +18,17 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql)
 include_directories(${SQLite3_INCLUDE_DIRS})
 
 file(GLOB SOURCES
-    #${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
-    #${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp
-    #${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main* # <TEMP
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/dynamic* # <TEMP
-
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.ui
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.qrc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/db/*.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/db/*.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/db/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/db/cache/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/db/cache/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/db/cache/*.cpp
 )
 
 add_executable(${CMAKE_PROJECT_NAME}

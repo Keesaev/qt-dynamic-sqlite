@@ -39,9 +39,9 @@ int db_test_table::column_count() const
     return _column_count;
 }
 
-std::vector<table_row> db_test_table::select(select_query query) const
+std::vector<TableRow> db_test_table::select(select_query query) const
 {
-    std::vector<table_row> out;
+    std::vector<TableRow> out;
 
     auto statement_deleter = [](sqlite3_stmt* statement) {
         if (statement != nullptr) {
@@ -75,7 +75,7 @@ std::vector<table_row> db_test_table::select(select_query query) const
 
     int ret = sqlite3_step(statement.get());
     while (ret == SQLITE_ROW) {
-        out.emplace_back(table_row {
+        out.emplace_back(TableRow {
             sqlite3_column_int(statement.get(), 0),
             reinterpret_cast<const char*>(sqlite3_column_text(statement.get(), 1)),
             sqlite3_column_int(statement.get(), 2) });
@@ -87,6 +87,6 @@ std::vector<table_row> db_test_table::select(select_query query) const
     return out;
 }
 
-void db_test_table::insert(std::vector<table_row> rows)
+void db_test_table::insert(std::vector<TableRow> rows)
 {
 }

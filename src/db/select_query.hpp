@@ -4,7 +4,9 @@
 
 class select_query {
     const std::string _table_name;
-    // std::string order_by " ORDER BY ROWID DESC/ASC " // TODO
+    // TODO:
+    // ORDER BY ROWID DESC/ASC
+    // WHERE <colname> LIKE *<pattern>*
     const int _offset = 1;
     const int _limit = 0;
 

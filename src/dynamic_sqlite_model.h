@@ -7,11 +7,13 @@
 class DynamicSQLiteModel final : public QAbstractTableModel {
     Q_OBJECT
 
+    const QString _tableName;
+
     db_instance _db_instance;
     db_test_table _db_table;
 
 public:
-    explicit DynamicSQLiteModel(QObject* parent = nullptr);
+    explicit DynamicSQLiteModel(QString tableName, QObject* parent = nullptr);
     virtual ~DynamicSQLiteModel() { }
 
     virtual int columnCount(const QModelIndex& parent = QModelIndex()) const final;

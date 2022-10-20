@@ -3,10 +3,10 @@
 
 #include <iostream>
 
-
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , _model("TEST_TABLE")
 {
     ui->setupUi(this);
 

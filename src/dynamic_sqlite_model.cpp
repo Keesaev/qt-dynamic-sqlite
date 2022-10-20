@@ -2,9 +2,10 @@
 
 #include <QDebug>
 
-DynamicSQLiteModel::DynamicSQLiteModel(QObject* parent)
+DynamicSQLiteModel::DynamicSQLiteModel(QString tableName, QObject* parent)
     : QAbstractTableModel { parent }
-    , _db_instance("../test/test.db")
+    , _tableName { tableName }
+    , _db_instance("../test/test.db") // <TODO pass instance instead of constructing
     , _db_table(_db_instance, "TEST_TABLE")
 {
     _db_instance.connect();
