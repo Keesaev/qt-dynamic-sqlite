@@ -47,6 +47,6 @@ QVariant DynamicSQLiteModel::headerData(int section, Qt::Orientation orientation
 }
 
 void DynamicSQLiteModel::cacheCompleted(CacheWindow window){
-    // TODO
+    emit dataChanged(index(window.left(), 0), index(window.right() - 1, _db_table.columnCount() - 1), {Qt::DisplayRole});
 }
 
