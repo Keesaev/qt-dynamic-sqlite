@@ -65,15 +65,7 @@ TableRow CacheController::get(int id)
     } else {
         if (_window.contains(id)) {
             int offset_index = id - _window.left();
-            try{
-                return _data.at(offset_index);
-            }
-            catch(std::exception &ex){
-                std::cerr << "=================== " << ex.what() << " offset_index="
-                          << offset_index << " id=" << id << std::endl;
-                return TableRow(_table->columnCount(), tr("Загрузка"));
-            }
-            // return _data[offset_index];
+            return _data[offset_index];
         } else {
             fetch(id, false);
             return TableRow(_table->columnCount(), tr("Загрузка"));

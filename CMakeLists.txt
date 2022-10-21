@@ -35,7 +35,7 @@ add_executable(${CMAKE_PROJECT_NAME}
     ${SOURCES}
 )
 
-target_link_libraries(qt-dynamic-sqlite PRIVATE
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Sql
     SQLite::SQLite3
