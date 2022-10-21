@@ -10,12 +10,12 @@ class CacheWindow {
 public:
     /**
      * @brief Construct an interval of specified \arg \c size with \arg \c id located in center
-     * i.e calling CacheWindow(100, 10) will construct window interval [90, 110]
+     * i.e calling CacheWindow(100, 10) will construct window interval [90, 110) (110 excluded)
      */
-    CacheWindow(int id, int size = 1000)
+    CacheWindow(int id, int size = 500)
         : _id(id)
         , _size { size }
-        , _left { (id - _size / 2) < 0 ? 0 : (id - _size / 2) }
+        , _left { std::max(id - _size / 2, 0) }
         , _right { id + _size / 2 }
         , _completed { false }
     {
@@ -25,7 +25,7 @@ public:
      */
     bool contains(int id) const
     {
-        return (id <= _right && id >= _left);
+        return (id < _right && id >= _left);
     }
     int id() const { return _id; }
     int left() const { return _left; }

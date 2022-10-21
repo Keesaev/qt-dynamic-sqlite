@@ -7,7 +7,7 @@ DynamicSQLiteModel::DynamicSQLiteModel(QString tableName, QObject* parent)
     , _tableName { tableName }
     , _db_instance("../test/test.db") // <TODO pass instance instead of constructing
     , _db_table(_db_instance, "TEST_TABLE")
-    , _cache(&_db_table, SelectQuery(_db_table.tableName(), 1000))
+    , _cache(&_db_table, SelectQuery(_db_table.tableName()))
 {
     _db_instance.connect();
     connect(&_cache, &CacheController::cacheCompleted, this, &DynamicSQLiteModel::cacheCompleted);
@@ -39,7 +39,7 @@ QVariant DynamicSQLiteModel::headerData(int section, Qt::Orientation orientation
             QVariantList headers { "ID", "Name", "Code" };
             return headers[section];
         } else {
-            return section;
+            return section + 1;
         }
     } else {
         return QVariant();
@@ -47,6 +47,6 @@ QVariant DynamicSQLiteModel::headerData(int section, Qt::Orientation orientation
 }
 
 void DynamicSQLiteModel::cacheCompleted(CacheWindow window){
-    qDebug() << "cacheCompleted " << window.left() << ", " << window.right(); //<TODO
+    // TODO
 }
 

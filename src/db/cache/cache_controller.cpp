@@ -19,11 +19,11 @@ void CacheController::fetch(int id, bool force)
         }
     }
 
-    std::cout << "FETCHING WINDOW [" << _window.left() << ", " << _window.right() << "]" << std::endl;
-
     _window = CacheWindow(id); // completed = false
     auto watcher = new QFutureWatcher<std::vector<TableRow>>;
 
+
+    _query = _query.offset(_window.left()).limit(_window.size());
     auto query = _query; // c++11
     auto future = QtConcurrent::run([this, query]() -> std::vector<TableRow> {
         return _table->select(query);
@@ -38,7 +38,6 @@ void CacheController::fetch(int id, bool force)
             fetch(id, true);
         }
         else{
-            qDebug() << "FETCH COMPLETE";
             _window.complete();
             emit cacheCompleted(_window);
         }
@@ -63,9 +62,16 @@ TableRow CacheController::get(int id)
         return TableRow(_table->columnCount(), tr("Загрузка"));
     } else {
         if (_window.contains(id)) {
-            int offset_index = id - _window.left() + 1;
-            qDebug() << "HIT " << offset_index << " WINDOW [" << _window.left() << ", " << _window.right() << "]";
-            return _data[offset_index];
+            int offset_index = id - _window.left();
+            try{
+                return _data.at(offset_index);
+            }
+            catch(std::exception &ex){
+                std::cerr << "=================== " << ex.what() << " offset_index="
+                          << offset_index << " id=" << id << std::endl;
+                return TableRow(_table->columnCount(), tr("Загрузка"));
+            }
+            // return _data[offset_index];
         } else {
             fetch(id, false);
             return TableRow(_table->columnCount(), tr("Загрузка"));

@@ -38,6 +38,8 @@ int DbTestTable::columnCount() const
 
 std::vector<TableRow> DbTestTable::select(SelectQuery query) const
 {
+    std::cout << std::string(query) << std::endl;
+
     std::scoped_lock<std::mutex> lock(_mutex);
     std::vector<TableRow> out;
 
