@@ -12,6 +12,7 @@ DbTestTable::~DbTestTable() { }
 
 int DbTestTable::rowCount() const
 {
+    std::scoped_lock<std::mutex> lock(_mutex);
     // TODO RAII sqlite3_stm
     const static std::string sql = "SELECT COUNT(*) FROM TEST_TABLE;";
     sqlite3_stmt* statement;
@@ -41,6 +42,7 @@ int DbTestTable::columnCount() const
 
 std::vector<TableRow> DbTestTable::select(SelectQuery query) const
 {
+    std::scoped_lock<std::mutex> lock(_mutex);
     std::vector<TableRow> out;
 
     auto statement_deleter = [](sqlite3_stmt* statement) {
