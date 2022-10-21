@@ -9,18 +9,19 @@ CacheController::CacheController(const DbBaseTable* const table, SelectQuery que
     , _query(query)
     , _window(0)
 {
-    fetch(0);
 }
 
 void CacheController::fetch(int id, bool force)
 {
-    if (_fetching && _window.contains(id)) {
-        return;
+    if (!force) {
+        if (!_window.completed() /*&& _window.contains(id)*/) {
+            return;
+        }
     }
 
     std::cout << "FETCHING WINDOW [" << _window.left() << ", " << _window.right() << "]" << std::endl;
 
-    _window = CacheWindow(id);
+    _window = CacheWindow(id); // completed = false
     auto watcher = new QFutureWatcher<std::vector<TableRow>>;
 
     auto query = _query; // c++11
@@ -32,11 +33,17 @@ void CacheController::fetch(int id, bool force)
         watcher->deleteLater();
 
         _data = future.result();
-        emit cacheCompleted(_window);
-        _fetching = false;
+        if(_data.empty()){
+            qDebug() << "REFETCHING";
+            fetch(id, true);
+        }
+        else{
+            qDebug() << "FETCH COMPLETE";
+            _window.complete();
+            emit cacheCompleted(_window);
+        }
     });
 
-    _fetching = true;
     watcher->setFuture(future);
 }
 
@@ -48,14 +55,19 @@ void CacheController::query(SelectQuery query)
 
 TableRow CacheController::get(int id)
 {
-    if (_fetching) {
+    if (!_window.completed()) {
+        // first fetch
+        if(_data.empty()){
+            fetch(id, true);
+        }
         return TableRow(_table->columnCount(), tr("Загрузка"));
     } else {
         if (_window.contains(id)) {
-            std::cout << "HIT " << id << std::endl;
-            return _data[id];
+            int offset_index = id - _window.left() + 1;
+            qDebug() << "HIT " << offset_index << " WINDOW [" << _window.left() << ", " << _window.right() << "]";
+            return _data[offset_index];
         } else {
-            fetch(id);
+            fetch(id, false);
             return TableRow(_table->columnCount(), tr("Загрузка"));
         }
     }

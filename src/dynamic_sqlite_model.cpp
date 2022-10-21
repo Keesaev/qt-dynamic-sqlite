@@ -7,8 +7,10 @@ DynamicSQLiteModel::DynamicSQLiteModel(QString tableName, QObject* parent)
     , _tableName { tableName }
     , _db_instance("../test/test.db") // <TODO pass instance instead of constructing
     , _db_table(_db_instance, "TEST_TABLE")
+    , _cache(&_db_table, SelectQuery(_db_table.tableName(), 1000))
 {
     _db_instance.connect();
+    connect(&_cache, &CacheController::cacheCompleted, this, &DynamicSQLiteModel::cacheCompleted);
 }
 
 int DynamicSQLiteModel::columnCount(const QModelIndex& parent) const
@@ -24,8 +26,7 @@ int DynamicSQLiteModel::rowCount(const QModelIndex& parent) const
 QVariant DynamicSQLiteModel::data(const QModelIndex& index, int role) const
 {
     if (role == Qt::DisplayRole) {
-        auto row = _db_table.select(SelectQuery(_db_table.tableName(), 1, index.row()));
-        return row[0][index.column()];
+        return _cache.get(index.row())[index.column()];
     } else {
         return QVariant();
     }
@@ -44,3 +45,8 @@ QVariant DynamicSQLiteModel::headerData(int section, Qt::Orientation orientation
         return QVariant();
     }
 }
+
+void DynamicSQLiteModel::cacheCompleted(CacheWindow window){
+    qDebug() << "cacheCompleted " << window.left() << ", " << window.right(); //<TODO
+}
+

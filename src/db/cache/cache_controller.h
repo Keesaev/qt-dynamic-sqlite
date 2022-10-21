@@ -17,7 +17,6 @@ class CacheController : public QObject {
     CacheWindow _window;
 
     std::vector<TableRow> _data;
-    bool _fetching { false };
 
     void fetch(int id, bool force = false);
 

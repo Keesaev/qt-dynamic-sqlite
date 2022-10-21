@@ -4,6 +4,8 @@
 
 #include "db/db_test_table.h"
 
+#include "db/cache/cache_controller.h"
+
 class DynamicSQLiteModel final : public QAbstractTableModel {
     Q_OBJECT
 
@@ -11,6 +13,10 @@ class DynamicSQLiteModel final : public QAbstractTableModel {
 
     DbInstance _db_instance;
     DbTestTable _db_table;
+    mutable CacheController _cache; // gets updated from const data() method
+
+private slots:
+    void cacheCompleted(CacheWindow window);
 
 public:
     explicit DynamicSQLiteModel(QString tableName, QObject* parent = nullptr);
