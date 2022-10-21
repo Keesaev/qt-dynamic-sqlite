@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+
 class CacheWindow {
     int _id;
     int _size;
@@ -12,7 +14,7 @@ public:
      * @brief Construct an interval of specified \arg \c size with \arg \c id located in center
      * i.e calling CacheWindow(100, 10) will construct window interval [90, 110) (110 excluded)
      */
-    CacheWindow(int id, int size = 500)
+    CacheWindow(int id, int size = 1000 /*TODO SET DEFAULT SIZE TO LARGE NUMBER*/)
         : _id(id)
         , _size { size }
         , _left { std::max(id - _size / 2, 0) }
@@ -37,7 +39,15 @@ public:
      */
     bool completed() const { return _completed; };
     /**
-     * @brief call when caching is completed
+     * @brief complete - call with received result to mark window as completed
+     *  and shrink window if needed
+     * @param result - container with size() method
      */
-    void complete() { _completed = true; };
+    template<typename Container>
+    void complete(Container const& result) {
+        static_assert(std::is_member_function_pointer
+            <decltype(&Container::size)>::value);
+        _completed = true;
+        _right = std::min(static_cast<std::size_t>(_right), result.size() + _left);
+    };
 };

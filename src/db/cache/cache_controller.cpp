@@ -9,12 +9,14 @@ CacheController::CacheController(const DbBaseTable* const table, SelectQuery que
     , _query(query)
     , _window(0)
 {
+    assert(table != nullptr);
+    assert(!_query.tableName().empty());
 }
 
 void CacheController::fetch(int id, bool force)
 {
     if (!force) {
-        if (!_window.completed() /*&& _window.contains(id)*/) {
+        if (!_window.completed()) {
             return;
         }
     }
@@ -38,7 +40,7 @@ void CacheController::fetch(int id, bool force)
             fetch(id, true);
         }
         else{
-            _window.complete();
+            _window.complete(_data);
             emit cacheCompleted(_window);
         }
     });
