@@ -14,7 +14,7 @@ DbTestTable::~DbTestTable() { }
 
 int DbTestTable::rowCount() const
 {
-    std::scoped_lock<std::mutex> lock(_mutex);
+    std::unique_lock<std::mutex> lock(_mutex);
     const static std::string sql = "SELECT COUNT(*) FROM TEST_TABLE;";
 
     auto statement = db_helper::make_statement(_instance.connection(), sql);
@@ -40,7 +40,7 @@ std::vector<TableRow> DbTestTable::select(SelectQuery query) const
 {
     std::cout << std::string(query) << std::endl;
 
-    std::scoped_lock<std::mutex> lock(_mutex);
+    std::unique_lock<std::mutex> lock(_mutex);
     std::vector<TableRow> out;
 
     auto statement = db_helper::make_statement(_instance.connection(), query);
