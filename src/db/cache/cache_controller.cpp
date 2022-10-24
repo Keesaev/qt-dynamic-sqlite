@@ -1,9 +1,5 @@
 #include "cache_controller.h"
 
-#include <iostream> // <TODO rm all stdout
-
-#include <QtConcurrent/QtConcurrent>
-
 CacheController::CacheController(const DbBaseTable* const table, SelectQuery query)
     : _table(table)
     , _query(query)
@@ -29,6 +25,7 @@ CacheController::CacheController(const DbBaseTable* const table, SelectQuery que
 CacheController::~CacheController(){
     _fetcher.stop();
     _fetcherThread.quit();
+    _fetcherThread.wait();
 }
 
 void CacheController::fetch(int id, bool force)

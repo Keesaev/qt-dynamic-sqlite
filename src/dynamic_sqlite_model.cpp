@@ -2,13 +2,13 @@
 
 #include <QDebug>
 
-DynamicSQLiteModel::DynamicSQLiteModel(QString tableName, QObject* parent)
+DynamicSQLiteModel::DynamicSQLiteModel(DbInstance &instance, QString tableName, QObject* parent)
     : QAbstractTableModel { parent }
     , _tableName { tableName }
-    , _db_instance("../test/test.db") // <TODO pass instance instead of constructing
-    , _db_table(_db_instance, "TEST_TABLE")
-    , _cache(&_db_table, SelectQuery(_db_table.tableName())),
-      _filters(_db_table.columnCount())
+    , _db_instance(instance) // <TODO pass instance instead of constructing
+    , _db_table(_db_instance, tableName.toStdString())
+    , _cache(&_db_table, SelectQuery(_db_table.tableName()))
+    , _filters(_db_table.columnCount())
 {
     qRegisterMetaType<TableRow>("TableRow");
     qRegisterMetaType<std::vector<TableRow>>("std::vector<TableRow>");

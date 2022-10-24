@@ -11,7 +11,7 @@ class DynamicSQLiteModel final : public QAbstractTableModel {
 
     const QString _tableName;
 
-    DbInstance _db_instance;
+    DbInstance &_db_instance;
     DbTestTable _db_table;
     mutable CacheController _cache; // gets updated from const data() method
 
@@ -23,7 +23,7 @@ private slots:
     void cacheCompleted(CacheWindow window);
 
 public:
-    explicit DynamicSQLiteModel(QString tableName, QObject* parent = nullptr);
+    explicit DynamicSQLiteModel(DbInstance &instance, QString tableName, QObject* parent = nullptr);
     virtual ~DynamicSQLiteModel() { }
 
     virtual int columnCount(const QModelIndex& parent = QModelIndex()) const final;

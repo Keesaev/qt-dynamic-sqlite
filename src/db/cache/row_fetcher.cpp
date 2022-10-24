@@ -1,7 +1,5 @@
 #include "row_fetcher.h"
 
-#include <iostream> // TODO rm
-
 RowFetcher::RowFetcher(const DbBaseTable* const table)
     : QObject(nullptr)
     , _table(table)
@@ -18,11 +16,16 @@ void RowFetcher::stop(){
     _task_cv.notify_all();
 }
 
+/**
+ * @brief RowFetcher::run
+ * Sleeps untill new tasks arrives via push_back call or _running set to false
+ * After task is done, checks if it is still required by comparing it to latest new task,
+ * if last executed task is required, emits rowsFetched and clears task queue, otherwise starts executing next one
+ */
 void RowFetcher::run(){
     _running = true;
     while (true) {
         std::unique_lock<std::mutex> lock(_taskMutex);
-        std::cout << "waiting..." << std::endl;
         _task_cv.wait(lock, [this]() {
             return !_tasks.empty() || !_running;
         });
@@ -43,7 +46,7 @@ void RowFetcher::run(){
         if(!_tasks.empty()){
             // If last fetched window doesn't contain new task's id, don't emit rowsFetched
             // because received rows are no longer required
-            if(task.window().contains(_tasks.back().window().id())){
+            if (task.window().contains(_tasks.back().window().id())) {
                 _tasks.clear();
                 emit rowsFetched(task.window(), std::move(rows));
             }

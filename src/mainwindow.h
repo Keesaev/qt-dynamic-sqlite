@@ -12,7 +12,7 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
+    DbInstance _db;
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();

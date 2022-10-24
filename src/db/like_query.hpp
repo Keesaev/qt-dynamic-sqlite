@@ -14,16 +14,28 @@ public:
     LikeQuery(std::vector<std::string> columnNames) : _columnNames(columnNames)
     {
     }
+    /**
+     * @brief addFilter - adds a filter at specified column
+     * @param filter - ignored if empty
+     * @param column - must be in range [0, columnNames)
+     */
     LikeQuery& addFilter(std::string filter, int column){
         assert(column >= 0 && column < _columnNames.size());
         _filters[column] = filter;
         return *this;
     }
+    /**
+     * @brief addFilters - adds several filters where columns are vector indexes
+     * @param filters - size must be same as columnCount, index is column id
+     */
     LikeQuery& addFilters(std::vector<std::string> filters){
         assert(filters.size() == _columnNames.size());
         _filters = filters;
         return *this;
     }
+    /**
+     * @brief dump - returns statement that looks like " WHERE COLUMN_NAME LIKE '%PATTERN%' AND ..."
+     */
     std::string dump() const
     {
         if(_filters.empty()){

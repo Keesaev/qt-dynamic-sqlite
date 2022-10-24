@@ -8,15 +8,18 @@
 #include "cache_window.hpp"
 #include "../db_base_table.hpp"
 
-// TODO CancelTask ?
-
 class FetchTask{
     CacheWindow _window;
     SelectQuery _query;
+
 public:
+    /**
+     * @brief FetchTask
+     * @param q - select query, size and offset will be overriden
+     */
     FetchTask(CacheWindow w, SelectQuery q)
-        : _window(w)
-        , _query{q.limit(w.size()).offset(w.left())}
+        : _window { w }
+        , _query { q.limit(w.size()).offset(w.left()) }
     {
     }
     CacheWindow& window() { return _window; }

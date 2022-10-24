@@ -6,7 +6,8 @@
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , _model("TEST_TABLE")
+    , _db("../test/test.db")
+    , _model(_db, "TEST_TABLE")
 {
     ui->setupUi(this);
 
