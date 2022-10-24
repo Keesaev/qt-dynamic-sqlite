@@ -24,7 +24,7 @@ public:
         _filters = filters;
         return *this;
     }
-    operator std::string() const
+    std::string dump() const
     {
         if(_filters.empty()){
             return "";

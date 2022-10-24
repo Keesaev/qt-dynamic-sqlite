@@ -15,7 +15,7 @@ public:
     DbTestTable(DbInstance const& instance, std::string tableName);
     virtual ~DbTestTable();
 
-    virtual int rowCount() const final;
+    virtual int rowCount(LikeQuery like = LikeQuery()) const final;
     virtual int columnCount() const final;
     virtual std::vector<std::string> columnNames() const final;
 

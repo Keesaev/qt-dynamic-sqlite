@@ -12,10 +12,10 @@ DbTestTable::DbTestTable(DbInstance const& instance, std::string tableName)
 
 DbTestTable::~DbTestTable() { }
 
-int DbTestTable::rowCount() const
+int DbTestTable::rowCount(LikeQuery like) const
 {
     std::unique_lock<std::mutex> lock(_mutex);
-    const static std::string sql = "SELECT COUNT(*) FROM TEST_TABLE;";
+    const std::string sql = "SELECT COUNT(*) FROM TEST_TABLE " + like.dump();
 
     auto statement = db_helper::make_statement(_instance.connection(), sql);
 

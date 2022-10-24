@@ -61,7 +61,7 @@ public:
      */
     operator std::string() const
     {
-        auto res = "SELECT * FROM " + _tableName + (std::string)_like;
+        auto res = "SELECT * FROM " + _tableName + _like.dump();
 
         if (_limit >= 0) {
             res += " LIMIT "

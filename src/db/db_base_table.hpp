@@ -25,7 +25,7 @@ public:
 
     std::string tableName() const { return _tableName; }
 
-    virtual int rowCount() const = 0;
+    virtual int rowCount(LikeQuery like = LikeQuery()) const = 0;
     virtual int columnCount() const = 0;
     virtual std::vector<std::string> columnNames() const = 0;
 
