@@ -19,8 +19,8 @@ public:
         , _query{q.limit(w.size()).offset(w.left())}
     {
     }
-    CacheWindow window() const { return _window; }
-    SelectQuery query() const { return _query; }
+    CacheWindow& window() { return _window; }
+    SelectQuery& query() { return _query; }
 };
 
 class RowFetcher : public QObject{

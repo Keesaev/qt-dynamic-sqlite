@@ -5,11 +5,11 @@
 #include <QObject>
 
 class CacheWindow {
-    int _id;
-    int _size;
-    int _left;
-    int _right;
-    bool _completed;
+    int _id { 0 };
+    int _size { 0 };
+    int _left { 0 };
+    int _right { 0 };
+    bool _completed { false };
 
 public:
     /**
@@ -49,7 +49,7 @@ public:
     template<typename Container>
     void complete(Container const& result) {
         static_assert(std::is_member_function_pointer
-            <decltype(&Container::size)>::value, "");
+            <decltype(&Container::size)>::value, "Pass std container");
         _completed = true;
         _right = std::min(static_cast<std::size_t>(_right), result.size() + _left);
     };

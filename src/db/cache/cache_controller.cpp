@@ -14,6 +14,8 @@ CacheController::CacheController(const DbBaseTable* const table, SelectQuery que
     assert(table != nullptr);
     assert(!_query.tableName().empty());
 
+    _window.complete(std::vector<TableRow>{});
+
     qRegisterMetaType<CacheWindow>("CacheWindow");
 
     _fetcher.moveToThread(&_fetcherThread);
@@ -42,9 +44,9 @@ void CacheController::fetch(int id, bool force)
 }
 
 void CacheController::fetchCompleted(CacheWindow window, std::vector<TableRow> rows){
-    std::cout << "fetchCompleted" << std::endl;
     _data = rows;
     _window = window;
+
     emit cacheCompleted(window);
 }
 

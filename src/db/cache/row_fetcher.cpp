@@ -37,6 +37,7 @@ void RowFetcher::run(){
 
         auto rows = _table->select(task.query());
         task.window().complete(rows);
+
         // TODO check queue once again and don't emit if rows is not in new window
         emit rowsFetched(task.window(), std::move(rows));
 
