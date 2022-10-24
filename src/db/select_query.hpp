@@ -1,8 +1,9 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include <cassert>
+
+#include "like_query.hpp"
 
 class SelectQuery {
     std::string _tableName;
@@ -10,8 +11,7 @@ class SelectQuery {
     // ORDER BY ROWID DESC/ASC ?
     int _offset = -1;
     int _limit = -1;
-    std::vector<std::string> _filters;
-    std::vector<std::string> _columnNames;
+    LikeQuery _like;
 
 public:
     /**
@@ -51,11 +51,8 @@ public:
      * @param filters - string filters, size must be same as @param columnNames, empty strings will be ignored
      * @param columnNames - column names
      */
-    SelectQuery& like(std::vector<std::string> filters,
-                      std::vector<std::string> columnNames){
-        assert(filters.size() == columnNames.size());
-        _filters = filters;
-        _columnNames = columnNames;
+    SelectQuery& like(LikeQuery likeQuery){
+        _like = likeQuery;
         return *this;
     }
     /**
@@ -64,25 +61,7 @@ public:
      */
     operator std::string() const
     {
-        auto res = "SELECT * FROM " + _tableName;
-
-        // LIKE
-        if(!_filters.empty()){
-            std::vector<std::string> queries;
-
-            for(int i = 0; i < _filters.size(); i++){
-                if(!_filters[i].empty()){
-                    queries.push_back(' ' + _columnNames[i] + "LIKE %" + _filters[i] + '%');
-                }
-            }
-
-            if(!queries.empty()){
-                res += " WHERE" + queries.front();
-                for(int i = 1; i < queries.size(); i++){
-                    res += " AND" + queries[i] + ' ';
-                }
-            }
-        }
+        auto res = "SELECT * FROM " + _tableName + (std::string)_like;
 
         if (_limit >= 0) {
             res += " LIMIT "
