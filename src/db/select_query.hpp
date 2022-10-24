@@ -1,15 +1,17 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <cassert>
 
 class SelectQuery {
     std::string _tableName;
     // TODO:
-    // ORDER BY ROWID DESC/ASC
-    // WHERE <colname> LIKE *<pattern>*
+    // ORDER BY ROWID DESC/ASC ?
     int _offset = -1;
     int _limit = -1;
+    std::vector<std::string> _filters;
+    std::vector<std::string> _columnNames;
 
 public:
     /**
@@ -43,6 +45,19 @@ public:
         _offset = o;
         return *this;
     }
+    // TODO ESCAPE CHARACTERS
+    /**
+     * @brief set '%like%' wildcard
+     * @param filters - string filters, size must be same as @param columnNames, empty strings will be ignored
+     * @param columnNames - column names
+     */
+    SelectQuery& like(std::vector<std::string> filters,
+                      std::vector<std::string> columnNames){
+        assert(filters.size() == columnNames.size());
+        _filters = filters;
+        _columnNames = columnNames;
+        return *this;
+    }
     /**
      * @brief returns constructed query containing offset and limit if specified
      * doesn't guarantee correctness if tableName is incorrect
@@ -50,6 +65,25 @@ public:
     operator std::string() const
     {
         auto res = "SELECT * FROM " + _tableName;
+
+        // LIKE
+        if(!_filters.empty()){
+            std::vector<std::string> queries;
+
+            for(int i = 0; i < _filters.size(); i++){
+                if(!_filters[i].empty()){
+                    queries.push_back(' ' + _columnNames[i] + "LIKE %" + _filters[i] + '%');
+                }
+            }
+
+            if(!queries.empty()){
+                res += " WHERE" + queries.front();
+                for(int i = 1; i < queries.size(); i++){
+                    res += " AND" + queries[i] + ' ';
+                }
+            }
+        }
+
         if (_limit >= 0) {
             res += " LIMIT "
                 + std::to_string(std::max(_offset, 0))

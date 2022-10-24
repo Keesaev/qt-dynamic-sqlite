@@ -36,6 +36,11 @@ int DbTestTable::columnCount() const
     return _columnCount;
 }
 
+std::vector<std::string> DbTestTable::columnNames() const
+{
+    return _columnNames;
+}
+
 std::vector<TableRow> DbTestTable::select(SelectQuery query) const
 {
     std::cout << std::string(query) << std::endl;

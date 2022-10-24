@@ -27,6 +27,8 @@ public:
 
     virtual int rowCount() const = 0;
     virtual int columnCount() const = 0;
+    virtual std::vector<std::string> columnNames() const = 0;
+
     virtual std::vector<TableRow> select(SelectQuery query) const = 0;
     virtual void insert(std::vector<TableRow> rows) = 0;
 };
