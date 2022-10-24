@@ -16,7 +16,7 @@ public:
      * @brief Construct an interval of specified \arg \c size with \arg \c id located in center
      * i.e calling CacheWindow(100, 10) will construct window interval [90, 110) (110 excluded)
      */
-    CacheWindow(int id, int size = 1000 /*TODO SET DEFAULT SIZE TO LARGE NUMBER*/)
+    CacheWindow(int id, int size = 10000 /*TODO SET DEFAULT SIZE TO LARGE NUMBER*/)
         : _id(id)
         , _size { size }
         , _left { std::max(id - _size / 2, 0) }

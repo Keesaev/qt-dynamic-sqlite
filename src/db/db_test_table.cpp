@@ -17,6 +17,8 @@ int DbTestTable::rowCount(LikeQuery like) const
     std::unique_lock<std::mutex> lock(_mutex);
     const std::string sql = "SELECT COUNT(*) FROM TEST_TABLE " + like.dump();
 
+    std::cout << sql << std::endl;
+
     auto statement = db_helper::make_statement(_instance.connection(), sql);
 
     if (statement == nullptr) {

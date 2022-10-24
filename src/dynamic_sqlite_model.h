@@ -15,6 +15,10 @@ class DynamicSQLiteModel final : public QAbstractTableModel {
     DbTestTable _db_table;
     mutable CacheController _cache; // gets updated from const data() method
 
+    std::vector<std::string> _filters;
+
+    int _rowCount { -1 }; // cached row count
+
 private slots:
     void cacheCompleted(CacheWindow window);
 
@@ -26,4 +30,8 @@ public:
     virtual int rowCount(const QModelIndex& parent = QModelIndex()) const final;
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const final;
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const final;
+
+public slots:
+    void changeFilter(QString const& text, int column);
+
 };

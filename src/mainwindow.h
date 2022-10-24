@@ -17,6 +17,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+signals:
+    void filterChanged(QString const& text, int col);
+
 private:
     Ui::MainWindow *ui;
     DynamicSQLiteModel _model;
