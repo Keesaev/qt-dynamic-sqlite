@@ -28,9 +28,9 @@ class RowFetcher : public QObject{
     const DbBaseTable* const _table;
     std::vector<FetchTask> _tasks;
 
-    std::mutex _taskMutex;
+    std::mutex _taskMutex; // protects _tasks and _running
     std::condition_variable _task_cv;
-    std::atomic<bool> _running;
+    bool _running;
 
 public:
     RowFetcher(const DbBaseTable* const table);

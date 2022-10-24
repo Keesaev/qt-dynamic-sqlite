@@ -31,6 +31,7 @@ void RowFetcher::run(){
             return;
         }
 
+        // Pick last task only, skip the others
         auto task = _tasks.back();
         _tasks.clear();
         lock.unlock();
@@ -38,10 +39,18 @@ void RowFetcher::run(){
         auto rows = _table->select(task.query());
         task.window().complete(rows);
 
-        // TODO check queue once again and don't emit if rows is not in new window
-        emit rowsFetched(task.window(), std::move(rows));
-
-        std::cout << "processed " << task.window().left() << ", " << task.window().right() << std::endl;
+        lock.lock();
+        if(!_tasks.empty()){
+            // If last fetched window doesn't contain new task's id, don't emit rowsFetched
+            // because received rows are no longer required
+            if(task.window().contains(_tasks.back().window().id())){
+                _tasks.clear();
+                emit rowsFetched(task.window(), std::move(rows));
+            }
+        }
+        else{
+            emit rowsFetched(task.window(), std::move(rows));
+        }
     }
 }
 
@@ -49,7 +58,6 @@ void RowFetcher::push_back(FetchTask task){
     {
         std::unique_lock<std::mutex> lock(_taskMutex);
         _tasks.push_back(task);
-        std::cout << "push_back" << std::endl;
     }
     _task_cv.notify_one();
 }
