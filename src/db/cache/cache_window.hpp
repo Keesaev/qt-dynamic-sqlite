@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include <QObject>
+
 class CacheWindow {
     int _id;
     int _size;
@@ -22,6 +24,7 @@ public:
         , _completed { false }
     {
     }
+    CacheWindow() = default; // QMetaType limitation
     /**
      * @brief check if id is contained in window interval
      */
@@ -46,7 +49,7 @@ public:
     template<typename Container>
     void complete(Container const& result) {
         static_assert(std::is_member_function_pointer
-            <decltype(&Container::size)>::value);
+            <decltype(&Container::size)>::value, "");
         _completed = true;
         _right = std::min(static_cast<std::size_t>(_right), result.size() + _left);
     };

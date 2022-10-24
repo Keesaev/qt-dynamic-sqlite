@@ -7,10 +7,26 @@
 CacheController::CacheController(const DbBaseTable* const table, SelectQuery query)
     : _table(table)
     , _query(query)
-    , _window(0)
+    , _window(0),
+      _fetcherThread(this),
+      _fetcher(table)
 {
     assert(table != nullptr);
     assert(!_query.tableName().empty());
+
+    qRegisterMetaType<CacheWindow>("CacheWindow");
+
+    _fetcher.moveToThread(&_fetcherThread);
+    connect(&_fetcherThread, &QThread::started, &_fetcher, &RowFetcher::run);
+    connect(&_fetcher, &RowFetcher::rowsFetched,
+        this, &CacheController::fetchCompleted,
+        Qt::QueuedConnection);
+    _fetcherThread.start();
+}
+
+CacheController::~CacheController(){
+    _fetcher.stop();
+    _fetcherThread.quit();
 }
 
 void CacheController::fetch(int id, bool force)
@@ -22,31 +38,16 @@ void CacheController::fetch(int id, bool force)
     }
 
     _window = CacheWindow(id); // completed = false
-    auto watcher = new QFutureWatcher<std::vector<TableRow>>;
-
-
-    _query = _query.offset(_window.left()).limit(_window.size());
-    auto query = _query; // c++11
-    auto future = QtConcurrent::run([this, query]() -> std::vector<TableRow> {
-        return _table->select(query);
-    });
-
-    connect(watcher, &QFutureWatcher<std::vector<TableRow>>::finished, [=]() {
-        watcher->deleteLater();
-
-        _data = future.result();
-        if(_data.empty()){
-            qDebug() << "REFETCHING";
-            fetch(id, true);
-        }
-        else{
-            _window.complete(_data);
-            emit cacheCompleted(_window);
-        }
-    });
-
-    watcher->setFuture(future);
+    _fetcher.push_back({_window, _query});
 }
+
+void CacheController::fetchCompleted(CacheWindow window, std::vector<TableRow> rows){
+    std::cout << "fetchCompleted" << std::endl;
+    _data = rows;
+    _window = window;
+    emit cacheCompleted(window);
+}
+
 
 void CacheController::query(SelectQuery query)
 {

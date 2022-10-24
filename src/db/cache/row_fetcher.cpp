@@ -2,17 +2,24 @@
 
 #include <iostream> // TODO rm
 
-RowFetcher::RowFetcher(const DbBaseTable* const table, QObject* parent)
-    : QObject(parent)
+RowFetcher::RowFetcher(const DbBaseTable* const table)
+    : QObject(nullptr)
     , _table(table)
 {
 }
 
 RowFetcher::~RowFetcher(){
+    stop();
+}
+
+void RowFetcher::stop(){
+    std::unique_lock<std::mutex> lock(_taskMutex);
     _running = false;
+    _task_cv.notify_all();
 }
 
 void RowFetcher::run(){
+    _running = true;
     while (true) {
         std::unique_lock<std::mutex> lock(_taskMutex);
         std::cout << "waiting..." << std::endl;
@@ -29,6 +36,7 @@ void RowFetcher::run(){
         lock.unlock();
 
         auto rows = _table->select(task.query());
+        task.window().complete(rows);
         // TODO check queue once again and don't emit if rows is not in new window
         emit rowsFetched(task.window(), std::move(rows));
 

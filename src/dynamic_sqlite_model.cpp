@@ -9,6 +9,10 @@ DynamicSQLiteModel::DynamicSQLiteModel(QString tableName, QObject* parent)
     , _db_table(_db_instance, "TEST_TABLE")
     , _cache(&_db_table, SelectQuery(_db_table.tableName()))
 {
+    qRegisterMetaType<TableRow>("TableRow");
+    qRegisterMetaType<std::vector<TableRow>>("std::vector<TableRow>");
+
+
     _db_instance.connect();
     connect(&_cache, &CacheController::cacheCompleted, this, &DynamicSQLiteModel::cacheCompleted);
 }

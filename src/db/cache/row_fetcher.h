@@ -33,11 +33,14 @@ class RowFetcher : public QObject{
     std::atomic<bool> _running;
 
 public:
-    RowFetcher(const DbBaseTable* const table, QObject* parent = nullptr);
+    RowFetcher(const DbBaseTable* const table);
     ~RowFetcher();
+
+public slots:
     void run();
-    void push_back(FetchTask task);
     void stop();
+    void push_back(FetchTask task);
+
 signals:
     void rowsFetched(CacheWindow window, std::vector<TableRow> row);
 };

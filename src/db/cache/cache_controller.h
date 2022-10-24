@@ -2,8 +2,10 @@
 
 #include "../db_base_table.hpp"
 #include "cache_window.hpp"
+#include "row_fetcher.h"
 
 #include <QVariant>
+#include <QThread>
 
 #include <vector>
 
@@ -18,7 +20,12 @@ class CacheController : public QObject {
 
     std::vector<TableRow> _data;
 
+    QThread _fetcherThread;
+    RowFetcher _fetcher;
+
     void fetch(int id, bool force = false);
+private slots:
+    void fetchCompleted(CacheWindow window, std::vector<TableRow> rows);
 
 public:
     /**
@@ -27,6 +34,7 @@ public:
      * @param assert contains table name
      */
     CacheController(const DbBaseTable* const table, SelectQuery query);
+    ~CacheController();
     /**
      * @brief returns a specified row if cached, otherwise returns
      *  row containing empty cells (can be displayed) and triggers cache fetching
